@@ -10,9 +10,11 @@ import UIKit
 class ViewController: UIViewController, ViewControllerDelegate {
     
     @IBOutlet weak var tableView: UITableView!
-    var adresses = ["Дресерувальний майданчик 'Голосієво'","Цимбалевська вулиця, 34", "Стрийська вулиця,11"]
+    
+    private var data = Adrress.getUserData()
     
     let identifire = "identifire"
+    let adressKey = "adressKey"
     var indexPath: IndexPath = []
     
     override func viewDidLoad() {
@@ -20,10 +22,17 @@ class ViewController: UIViewController, ViewControllerDelegate {
         
         tableView.delegate = self
         tableView.dataSource = self
+        
+        if let direction = UserDefaults.standard.object(forKey: adressKey) as? [String] {
+            data.adress = direction
     }
-    
+}
+    func loadSettings() {
+    UserDefaults.standard.set(data.adress, forKey: adressKey)
+}
     func addTableDelegate(addForViewController: String) {
-        adresses.append(addForViewController)
+        data.adress.append(addForViewController)
+        loadSettings()
         tableView.reloadData()
     }
     
@@ -31,7 +40,6 @@ class ViewController: UIViewController, ViewControllerDelegate {
         let next =  storyboard?.instantiateViewController(withIdentifier: "SecondViewController") as! SecondViewController
         next.delegate = self
         navigationController?.pushViewController(next, animated: true)
-        
     }
     
     @IBAction func itemBar(_ sender: UIBarButtonItem) {
@@ -41,12 +49,12 @@ class ViewController: UIViewController, ViewControllerDelegate {
 extension ViewController: UITableViewDelegate, UITableViewDataSource {
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return adresses.count
+        return data.adress.count
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = UITableViewCell(style: .default, reuseIdentifier: identifire)
-        let number = adresses[indexPath.row]
+        let number = data.adress[indexPath.row]
         cell.textLabel?.text =  number
         
         return cell
@@ -55,25 +63,21 @@ extension ViewController: UITableViewDelegate, UITableViewDataSource {
     func tableView(_ tableView: UITableView, editingStyleForRowAt indexPath: IndexPath) -> UITableViewCell.EditingStyle {
         return .delete
     }
-     
-    func tableView(_ tableView: UITableView, trailingSwipeActionsConfigurationForRowAt indexPath: IndexPath) -> UISwipeActionsConfiguration? {
-        
-        let deleteAction = UIContextualAction(style: .destructive, title: nil) { (_, _, completionhandler) in
-            completionhandler(true)
-        }
-        adresses.remove(at: indexPath.row)
-        tableView.deleteRows(at: [indexPath], with: .top)
-        deleteAction.image = UIImage(systemName: "trash")
-        let configuration = UISwipeActionsConfiguration(actions: [deleteAction])
-        return configuration
-    }
+    func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCell.EditingStyle, forRowAt indexPath: IndexPath) {
+        if editingStyle == UITableViewCell.EditingStyle.delete{
+            data.adress.remove(at: indexPath.row)
+            tableView.deleteRows(at: [indexPath], with: UITableView.RowAnimation.none)
+            loadSettings()
+       }
+   }
+    
     func tableView(_ tableView: UITableView, moveRowAt sourceIndexPath: IndexPath, to destinationIndexPath: IndexPath) {
-        adresses.swapAt(sourceIndexPath.row, destinationIndexPath.row)
+        data.adress.swapAt(sourceIndexPath.row, destinationIndexPath.row)
+        loadSettings()
     }
     
     func tableView(_ tableView: UITableView, canMoveRowAt indexPath: IndexPath) -> Bool {
         return true
     }
-    
 }
 

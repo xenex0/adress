@@ -6,3 +6,12 @@
 //
 
 import Foundation
+
+struct Adrress {
+    var adress: [String]
+  
+   static func getUserData() -> Adrress {
+        Adrress(adress: ["Дресерувальний майданчик 'Голосієво'","Цимбалевська вулиця, 34", "Стрийська вулиця,11"] )
+    }
+}
+

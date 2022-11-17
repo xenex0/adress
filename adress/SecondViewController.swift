@@ -22,7 +22,6 @@ class SecondViewController: UIViewController {
         textField.text = someText
 
     }
-
     @IBAction func buttonAction(_ sender: Any) {
         let name = textField.text
         delegate?.addTableDelegate(addForViewController: name!)
