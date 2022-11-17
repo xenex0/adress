@@ -26,8 +26,6 @@ class SecondViewController: UIViewController {
     @IBAction func buttonAction(_ sender: Any) {
         let name = textField.text
         delegate?.addTableDelegate(addForViewController: name!)
-        //dismiss(animated: true, completion: nil)
         navigationController?.popViewController(animated: true)
-          print("hi \(name!)")
     }
 }
